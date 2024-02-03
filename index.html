@@ -3,16 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <title>Congress Voting</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        #votingStatus {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        #voteSection {
+            margin-top: 20px;
+        }
+
+        select, button {
+            margin-right: 10px;
+        }
+
+        #nftImage {
+            margin-top: 20px;
+        }
+
+        img {
+            max-width: 300px;
+        }
+    </style>
 </head>
 <body>
     <h1>Congress Voting</h1>
-    
+
+    <button onclick="connectWallet()">Connect Wallet</button>
+
     <div id="votingStatus"></div>
 
-    <button onclick="checkVotingStatus()">Check Voting Status</button>
-    
-    <div>
+    <div id="voteSection">
         <h2>Vote</h2>
         <label for="approval">Approval:</label>
         <select id="approval">
