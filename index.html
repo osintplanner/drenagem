@@ -1,497 +1,160 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Welcome to PamonhaChain</title>
-    <link rel="icon" href="https://i.ibb.co/tPsQCwS/cf6bff83-cc07-4a9b-a833-6296efa49901-removebg-preview.png">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
-    <!-- Animate On Scroll library -->
-    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.3.0/dist/web3.min.js"></script>
+    <title>Congress Voting</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            font-family: 'Orbitron', sans-serif;
-            background-color: #0a0b0e;
+            font-family: 'Roboto', sans-serif;
+            background-color: #0a192f;
             color: #ffffff;
-            text-align: center;
-            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
             margin: 0;
         }
 
-        .header {
-            font-size: 40px;
-            color: #00ffea;
-            margin: 20px 0;
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            animation: fadeIn 1s ease-in-out;
         }
 
-        .logo {
-            width: 200px;
-            margin: 20px auto;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        .container {
-            margin: 20px auto;
+        h1 {
+            font-size: 3em;
+            margin-bottom: 0;
+            color: #64ffda;
         }
 
-        .wallet-banner {
-            color: #00ffea;
-            margin: 20px auto;
+        #votingStatus {
+            font-size: 1.2em;
+            margin-top: 5px;
         }
 
-        .footer {
-            font-size: 14px;
-            color: #8f8f8f;
-            margin-top: 100px;
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .voting-container {
+            background-color: #112240;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            animation: slideIn 1s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: #64ffda;
+        }
+
+        .vote-section,
+        .nft-section {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #64ffda;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 1em;
+            margin-bottom: 20px;
+            border: 2px solid #64ffda;
+            border-radius: 5px;
+            background-color: transparent;
+            color: #64ffda;
         }
 
         button {
-            background-color: #00ffea;
+            background-color: #64ffda;
+            color: #0a192f;
+            padding: 10px 20px;
+            font-size: 1em;
             border: none;
             border-radius: 5px;
-            padding: 10px 20px;
-            color: #0a0b0e;
-            font-size: 18px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s ease-in-out;
         }
 
         button:hover {
-            background-color: #13e6d8;
+            background-color: #45aaf2;
         }
 
-        button:disabled {
-            background-color: #4e5154;
-            cursor: not-allowed;
+        #nftImage img {
+            max-width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        footer {
+            margin-top: 20px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        footer button {
+            background-color: #45aaf2;
+            color: #0a192f;
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        footer button:hover {
+            background-color: #64ffda;
         }
     </style>
 </head>
 <body>
-    <div class="header" data-aos="fade-down">PamonhaChain</div>
-    <img src="https://i.ibb.co/tPsQCwS/cf6bff83-cc07-4a9b-a833-6296efa49901-removebg-preview.png" alt="Logo Pamonha Chain" class="logo" data-aos="zoom-in">
-    <div class="container" data-aos="fade-up">
-        <button id="connectWalletButton">Conectar Wallet</button>
-        <button id="depositButton" disabled>Depositar 0.02 ETH e Receber Pamonha</button>
-    </div>
-    <div id="walletBanner" class="wallet-banner" data-aos="fade-in"></div>
-    <div class="footer">
-        Não deixe sua wallet virar pamonha: confira antes de clicar!
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
-    <script type="text/javascript">
-        // Inicialize o AOS (Animate On Scroll)
-        AOS.init();
+    <header>
+        <h1>Congress Voting</h1>
+        <div id="votingStatus"></div>
+    </header>
 
-        let web3;
-        let contract;
-        let accounts;
-
-        const contractABI = [
-	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "allowance",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "needed",
-				"type": "uint256"
-			}
-		],
-		"name": "ERC20InsufficientAllowance",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "sender",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "balance",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "needed",
-				"type": "uint256"
-			}
-		],
-		"name": "ERC20InsufficientBalance",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "approver",
-				"type": "address"
-			}
-		],
-		"name": "ERC20InvalidApprover",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "receiver",
-				"type": "address"
-			}
-		],
-		"name": "ERC20InvalidReceiver",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "sender",
-				"type": "address"
-			}
-		],
-		"name": "ERC20InvalidSender",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			}
-		],
-		"name": "ERC20InvalidSpender",
-		"type": "error"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "Approval",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "Transfer",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			}
-		],
-		"name": "allowance",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "approve",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "balanceOf",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "decimals",
-		"outputs": [
-			{
-				"internalType": "uint8",
-				"name": "",
-				"type": "uint8"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "deposit",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "depositAmount",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "minBalance",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "name",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "owner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "rewardAmount",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "symbol",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "totalSupply",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "transfer",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "transferFrom",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "withdrawMinBalance",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"stateMutability": "payable",
-		"type": "receive"
-	}
-];
-        const contractAddress = '0x1Ef397Cca4296D988EDDD7479479387B340Ff1f1'; // Endereço do contrato
-
-        const connectWalletButton = document.getElementById('connectWalletButton');
-        const depositButton = document.getElementById('depositButton');
-        const walletBanner = document.getElementById('walletBanner');
-
-        async function connectWallet() {
-            if (window.ethereum) {
-                web3 = new Web3(window.ethereum);
-                accounts = await web3.eth.requestAccounts();
-                contract = new web3.eth.Contract(contractABI, contractAddress);
-                depositButton.disabled = false;
-                walletBanner.textContent = `Sua Wallet: ${accounts[0].substring(0, 9)}...`;
-                walletBanner.style.display = 'block';
-            } else {
-                alert('Por favor, instale uma carteira de criptoativos, como a MetaMask, para conectar-se.');
-            }
-        }
-
-        connectWalletButton.addEventListener('click', connectWallet);
-
-        // Adicione aqui mais funcionalidades Web3 conforme necessário.
-    </script>
-</body>
-</html>
+    <main>
+        <div class="voting-container">
+            <div class="vote-section">
+                <h2>Vote</h2>
+                <label for="approval">Approval:</label>
+                <select id="approval">
+                    <option value="true">Approve</option>
+                    <option value="false">Reject</option>
+                </select>
+                <button onclick="vote()">Vote</button>
+            </div>
+            <div class="nft-section">
+                <h2>Your NFT</h2>
+                <div id="nftImage"></div>
+            </div>
+        </div>
+    </main
